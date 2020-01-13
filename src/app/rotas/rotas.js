@@ -1,5 +1,11 @@
+//Importando o express-validator
+//check: o que será checado
+//validationResult: resultado da validação
+const { check, validationResult } = require('express-validator');
 const LivroDao = require('../infra/livro-dao');
 const db = require('../../config/database');
+
+ 
 
 module.exports = (app) => {
     app.get('/', function(req, resp) {
@@ -38,11 +44,27 @@ module.exports = (app) => {
                 )
                 .catch(erro => console.log(erro));
     });
-
-    app.post('/livros', function(req, resp) {
+    
+    //Aplicando uma checagem no titulo cujo o campo tenha no minimo 5 caracteres
+    //isCurrency(): Se é um valor monetário
+    app.post('/livros', [check('titulo').isLength({ min: 5 }), check('preco').isCurrency()], function(req, resp) {
         console.log(req.body);
         const livroDao = new LivroDao(db);
         
+        //validationResult: Retorna os erros que acontecem na requisição
+        const erros = validationResult(req);
+
+        //Se aconteceu algum erro, volta para a página de formulário
+        //Se estiver vazio
+        if(!erros.isEmpty()){
+            return resp.marko(require('../views/livros/form/form.marko'),
+            { 
+                livro: {},
+                errosValidacao: erros.array() //devolve um array de erros 
+            
+            });
+        }
+
         livroDao.adiciona(req.body)
                 .then(resp.redirect('/livros'))
                 .catch(erro => console.log(erro));
