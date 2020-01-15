@@ -47,28 +47,33 @@ module.exports = (app) => {
     
     //Aplicando uma checagem no titulo cujo o campo tenha no minimo 5 caracteres
     //isCurrency(): Se é um valor monetário
-    app.post('/livros', [check('titulo').isLength({ min: 5 }), check('preco').isCurrency()], function(req, resp) {
-        console.log(req.body);
-        const livroDao = new LivroDao(db);
-        
-        //validationResult: Retorna os erros que acontecem na requisição
-        const erros = validationResult(req);
-
-        //Se aconteceu algum erro, volta para a página de formulário
-        //Se estiver vazio
-        if(!erros.isEmpty()){
-            return resp.marko(require('../views/livros/form/form.marko'),
-            { 
-                livro: {},
-                errosValidacao: erros.array() //devolve um array de erros 
+    app.post('/livros',[
+            check('titulo').isLength({ min: 5 }).withMessage("O título precisa ter no mínimo 5 caracteres!"), 
+            check('preco').isCurrency().withMessage("O preço precisa ter um valor monetário!")
+            ], function(req, resp) {
             
-            });
-        }
+            console.log(req.body);
+            const livroDao = new LivroDao(db);
+            
+            //validationResult: Retorna os erros que acontecem na requisição
+            const erros = validationResult(req);
 
-        livroDao.adiciona(req.body)
-                .then(resp.redirect('/livros'))
-                .catch(erro => console.log(erro));
-    });
+            //Se aconteceu algum erro, volta para a página de formulário
+            //Se estiver vazio
+            if(!erros.isEmpty()){
+                return resp.marko(require('../views/livros/form/form.marko'),
+                { 
+                    livro: {},
+                    errosValidacao: erros.array() //devolve um array de erros 
+                
+
+                });
+            }
+
+            livroDao.adiciona(req.body)
+                    .then(resp.redirect('/livros'))
+                    .catch(erro => console.log(erro));
+        });
 
     app.put('/livros', function(req, resp) {
         console.log(req.body);

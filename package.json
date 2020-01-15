@@ -15,7 +15,7 @@
     "express-validator": "^6.3.1",
     "marko": "4.13.4-1",
     "method-override": "3.0.0",
-    "sqlite3": "4.0.2"
+    "sqlite3": "^4.1.1"
   },
   "devDependencies": {
     "nodemon": "1.18.4"
