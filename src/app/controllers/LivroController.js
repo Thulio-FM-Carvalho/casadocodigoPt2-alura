@@ -5,6 +5,8 @@ const { check, validationResult } = require('express-validator');
 const LivroDao = require('../infra/livro-dao');
 const db = require('../../config/database');
 
+const templates = require("../views/templates"); //Importando o módulo contendo os templates
+
 //Classe controller
 class LivroController {
 
@@ -25,9 +27,9 @@ class LivroController {
             const livroDao = new LivroDao(db);
             livroDao.lista()
                     .then(livros => resp.marko(
-                        require('../views/livros/lista/lista.marko'),
+                        templates.livros.lista, //Importando o template
                         {
-                            livros: livros
+                            livros: livros      //Dados a serem passados pro template
                         }
                     ))
                     .catch(erro => console.log(erro));
