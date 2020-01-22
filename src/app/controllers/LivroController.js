@@ -38,7 +38,7 @@ class LivroController {
 
     formularioCadastro(){
         return function(req, resp) {
-            resp.marko(require('../views/livros/form/form.marko'), { livro: {} });
+            resp.marko(templates.livros.form, { livro: {} });
         }
     }
 
@@ -50,7 +50,7 @@ class LivroController {
             livroDao.buscaPorId(id)
                     .then(livro => 
                         resp.marko(
-                            require('../views/livros/form/form.marko'), 
+                            templates.livros.form, 
                             { livro: livro }
                         )
                     )
@@ -70,7 +70,7 @@ class LivroController {
             //Se aconteceu algum erro, volta para a página de formulário
             //Se estiver vazio
             if(!erros.isEmpty()){
-                return resp.marko(require('../views/livros/form/form.marko'),
+                return resp.marko(templates.livros.form,
                 { 
                     livro: {},
                     errosValidacao: erros.array() //devolve um array de erros 

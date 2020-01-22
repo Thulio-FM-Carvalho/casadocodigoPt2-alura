@@ -9,4 +9,9 @@ module.exports = (app) => {
 
     app.get(rotasBase.home, baseController.home());
     
+    //route(), é um método do express que agrega rotas 
+    //Ela recebe a URL como parâmetro
+    app.route(rotasBase.login)
+        .get(baseController.login())
+        .post(baseController.efetuaLogin());
 };
