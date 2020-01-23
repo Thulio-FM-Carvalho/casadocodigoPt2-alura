@@ -3,12 +3,24 @@
 const LivroController = require("../controllers/LivroController"); //Importando a classe LivroController 
 const livroController = new LivroController();                     //Instanciando a classe LivroController para ter acesso aos métodos dela
 
+const BaseController = require("../controllers/BaseController"); //Importando a controller
+
 const Livro = require("../models/Livro");       //Importando a classe modelo
 
 module.exports = (app) => {
 
     const rotasLivro = LivroController.rotas(); //Vindo da classe LivroController
     
+    //Middleware que só será executado pra todas as requisições cuja as urls batam exetamente com a chave que criamos
+    app.use(rotasLivro.autenticadas, function(req, resp, next){
+        //Se o usuário estiver autenticado, siga em frente
+        if (req.isAuthenticated()){
+            next();
+        } else {
+            resp.redirect(BaseController.rotas().login);
+        }
+    });
+
     app.get(rotasLivro.lista, livroController.lista());
 
     //route(), é um método do express que agrega rotas 

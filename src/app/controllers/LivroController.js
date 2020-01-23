@@ -13,6 +13,8 @@ class LivroController {
     //Método que retorna os Objetos de todas as rotas relativas aos livros
     static rotas(){
         return {
+            //"livros*" significa que todas as urls que tiver /livros serão bloqueadas
+            autenticadas: "/livros*",
             lista: "/livros",
             cadastro: "/livros/form",
             edicao: "/livros/form:id",

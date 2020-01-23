@@ -13,11 +13,12 @@ module.exports = function(app){
     passport.use(new LocalStrategy(
         {
             usernameField: "email", //Campo utilizado pra pegar o campo do usuário
-            passwordField:  "senha"
+            passwordField: "senha"
         }, 
+
         //Done só será executado quando terminarmos o processo de autenticação do usuário
         function(email, senha, done){
-            const usuarioDao = new usuarioDao(db); //Instanciando o DAO
+            const usuarioDao = new UsuarioDao(db); //Instanciando o DAO
             
             //Vai buscar o email que recebemos do formulario de login
             //O método vai retornar uma promise
@@ -41,4 +42,38 @@ module.exports = function(app){
                         });
         } 
     ));
+    
+    //Processo de serialização
+    passport.serializeUser(function(usuario, done){
+        //Representa as informações que vamos pegar do usuário e salvar na sessão
+        const usuarioSessao = {
+            nome: usuario.nome_completo, //"nome_completo": vindo do banco de dados
+            email: usuario.email
+        };
+
+        done(null, usuarioSessao);
+    });
+
+    //Processo de desserialização
+    passport.deserializeUser(function(usuarioSessao, done){
+        done(null, usuarioSessao);
+    });
+
+    app.use(sessao({
+        secret: "node alura",
+        genid: function(req){
+            return uuid();
+        },
+        resave: false,
+        saveUninitialized: false
+    }));
+
+    app.use(passport.initialize());
+    app.use(passport.session());
+
+    //Pra toda requisição que chegar na aplicação, faça
+    app.use(function(req, resp, next){
+        req.passport = passport;
+        next();
+    });
 };
